@@ -52,7 +52,9 @@
 
         /* 按鈕共用樣式 */
         .btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             background-color: var(--primary-brown);
             color: #FFF;
             border: none;
@@ -83,6 +85,16 @@
             background-color: var(--light-milk-tea);
             color: var(--primary-brown);
             border-color: var(--primary-brown);
+        }
+        
+        .btn-line {
+            background-color: #7F9B82;
+            color: #FFFFFF;
+        }
+
+        .btn-line:hover {
+            background-color: #6D8970;
+            color: #FFFFFF;
         }
 
         /* 隱藏與動畫 */
@@ -293,9 +305,20 @@
 
         .result-actions {
             display: flex;
-            gap: 16px;
+            gap: 14px;
             justify-content: center;
             flex-wrap: wrap;
+        }
+        
+        .result-help-text {
+            margin-top: 22px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text-light);
+            text-align: center;
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* 場景展示區塊 */
@@ -477,26 +500,32 @@
         .footer-links {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            align-items: center;
+            gap: 16px;
             flex-wrap: wrap;
         }
 
         .footer-links a {
-            color: #fff;
+            background-color: var(--light-milk-tea);
+            color: var(--primary-brown);
             text-decoration: none;
             font-weight: 500;
-            font-size: 1.1rem;
-            transition: opacity 0.3s ease;
+            font-size: 1rem;
+            padding: 10px 24px;
+            border-radius: 30px;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
         }
 
         .footer-links a:hover {
-            opacity: 0.8;
-            text-decoration: underline;
+            background-color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
         .footer-divider {
-            color: var(--secondary-brown);
-            user-select: none;
+            display: none;
         }
 
         /* RWD 設定 - 整合式行動版優化 (max-width: 768px) */
@@ -604,6 +633,17 @@
                 flex-direction: column;
                 gap: 12px;
                 width: 100%;
+            }
+            .result-actions .btn {
+                width: 100%;
+                max-width: 100%;
+                white-space: normal;
+            }
+            .result-help-text {
+                margin-top: 18px;
+                padding: 0 6px;
+                font-size: 0.9rem;
+                line-height: 1.7;
             }
 
             /* 五、推薦結果手機版 */
@@ -736,15 +776,35 @@
             }
             .footer-links {
                 display: flex;
-                flex-direction: column;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                align-items: center;
                 gap: 12px;
+                max-width: 100%;
+                margin: 0 auto;
+                overflow-x: auto;
+                padding-bottom: 8px;
+                -webkit-overflow-scrolling: touch;
             }
+            
+            .footer-links::-webkit-scrollbar {
+                display: none;
+            }
+            .footer-links {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+
             .footer-divider {
                 display: none;
             }
+            
             .footer-links a {
-                font-size: 1rem;
-                line-height: 1.5;
+                flex: 0 0 auto;
+                white-space: nowrap;
+                padding: 8px 18px;
+                font-size: 0.95rem;
             }
         }
     </style>
@@ -801,8 +861,13 @@
                 </ul>
                 <div class="result-actions">
                     <a href="#" class="btn" id="btn-purchase" target="_blank" onclick="trackEvent('click_purchase')">查看這台標籤機</a>
+                    <!-- 更新了 LINE 專人諮詢的連結 -->
+                    <a href="https://page.line.me/990sdfpe?oat_content=url&openQrModal=true" class="btn btn-line" id="btn-line" target="_blank" rel="noopener noreferrer" onclick="trackEvent('click_line_consultation')">LINE 專人諮詢</a>
                     <button class="btn btn-outline" onclick="restartQuiz()">重新測驗</button>
                 </div>
+                <p class="result-help-text">
+                    若您的需求包含多種使用情境，歡迎加入官方 LINE，由專人協助確認適合的機型。
+                </p>
             </div>
         </div>
     </section>
@@ -910,10 +975,10 @@
 
     // 頁尾連結資料
     const footerLinks = [
-        { title: '官網', url: 'https://www.niimbot.com.tw/' },
+        { title: '官方網站', url: 'https://www.niimbot.com.tw/' },
+        { title: '企業專區', url: 'https://www.niimbot.com.tw/pages/niimbot-Business' },
         { title: 'Instagram', url: 'https://www.instagram.com/niimbot.tw/' },
-        { title: 'Facebook', url: 'https://www.facebook.com/share/18A2btbEue/?mibextid=wwXIfr' },
-        { title: '企業專區', url: 'https://www.niimbot.com.tw/pages/niimbot-Business' }
+        { title: 'Facebook', url: 'https://www.facebook.com/share/18A2btbEue/?mibextid=wwXIfr' }
     ];
 
     // 初始化頁尾
