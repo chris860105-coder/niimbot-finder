@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIIMBOT 標籤機互動導購 - 幫你挑出最適合的一台</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #F8F4EE;
+            --light-milk-tea: #EADCCB;
+            --card-bg: #FFFFFF;
+            --primary-brown: #7B5E4A;
+            --secondary-brown: #B99B7E;
+            --text-dark: #40342D;
+            --text-light: #6b5c53;
+            --border-radius: 16px;
+            --shadow: 0 8px 24px rgba(123, 94, 74, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            line-height: 1.6;
+            font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            flex-grow: 1;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary-brown);
+            font-weight: 700;
+        }
+
+        /* 按鈕共用樣式 */
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-brown);
+            color: #FFF;
+            border: none;
+            border-radius: 25px;
+            padding: 14px 32px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            text-decoration: none;
+            min-height: 48px;
+        }
+
+        .btn:hover {
+            background-color: #634b3b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(123, 94, 74, 0.2);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-brown);
+            border: 2px solid var(--primary-brown);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light-milk-tea);
+            color: var(--primary-brown);
+            border-color: var(--primary-brown);
+        }
+
+        /* 隱藏與動畫 */
+        .hidden {
+            display: none !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 首頁區塊 */
+        #hero-section {
+            text-align: center;
+            padding: 60px 0;
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #hero-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        #hero-section p.subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            margin-bottom: 40px;
+        }
+
+        .hero-images {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .hero-images img {
+            height: 120px;
+            width: 120px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.05));
+            border-radius: 12px;
+            background-color: #fff;
+            padding: 8px;
+        }
+
+        .hero-banner {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 40px auto;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hero-banner:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 32px rgba(123, 94, 74, 0.15);
+        }
+
+        .hero-banner img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        .note {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 12px;
+        }
+
+        /* 測驗區塊 */
+        #quiz-section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+
+        .progress-bar-container {
+            background-color: var(--bg-color);
+            border-radius: 10px;
+            height: 8px;
+            margin: 20px 0 40px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--secondary-brown);
+            width: 33.33%;
+            transition: width 0.4s ease;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .quiz-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .option-card {
+            background-color: var(--bg-color);
+            border: 2px solid transparent;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-card:hover {
+            border-color: var(--secondary-brown);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(123, 94, 74, 0.1);
+        }
+
+        .option-card.selected {
+            border-color: var(--primary-brown);
+            background-color: #F1E8DC;
+        }
+
+        .option-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .option-desc {
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        /* 結果區塊 */
+        #result-section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 50px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .result-title {
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+
+        .recommended-machine {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .recommended-machine img {
+            max-width: 300px;
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+
+        .recommendation-details {
+            text-align: left;
+            max-width: 500px;
+        }
+
+        .machine-name {
+            font-size: 2.2rem;
+            color: var(--primary-brown);
+            margin-bottom: 16px;
+        }
+
+        .reason-text {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            background-color: var(--bg-color);
+            padding: 20px;
+            border-radius: 12px;
+            line-height: 1.8;
+        }
+
+        .features-list {
+            margin-bottom: 30px;
+            padding-left: 20px;
+        }
+
+        .features-list li {
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* 場景展示區塊 */
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            margin-top: 60px;
+        }
+
+        .scenes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .scene-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .scene-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(123, 94, 74, 0.12);
+        }
+
+        .scene-img-wrapper {
+            width: 100%;
+            height: 300px;
+            background-color: var(--light-milk-tea);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 0;
+        }
+
+        .scene-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            cursor: zoom-in;
+            transition: transform 0.3s ease;
+        }
+
+        .scene-card:hover .scene-img-wrapper img {
+            transform: scale(1.02);
+        }
+
+        .scene-info {
+            padding: 22px 24px 24px;
+        }
+
+        .scene-info h3 {
+            margin-bottom: 10px;
+            font-size: 1.35rem;
+        }
+
+        .scene-info p {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--text-light);
+            margin-bottom: 14px;
+        }
+
+        .scene-rec {
+            font-size: 0.95rem;
+            background: var(--bg-color);
+            padding: 8px 14px;
+            border-radius: 20px;
+            display: inline-block;
+            color: var(--primary-brown);
+            font-weight: 500;
+        }
+
+        /* Lightbox 樣式 */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .lightbox-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            display: block;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px;
+            line-height: 1;
+        }
+        
+        .lightbox-close:hover {
+            color: #ddd;
+        }
+
+        /* 比較表區塊 */
+        .comparison-wrapper {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-milk-tea);
+        }
+
+        .comparison-table th {
+            color: var(--primary-brown);
+            font-weight: 700;
+            background-color: var(--bg-color);
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 頁尾區塊 */
+        footer {
+            background-color: var(--primary-brown);
+            color: #fff;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .footer-divider {
+            color: var(--secondary-brown);
+            user-select: none;
+        }
+
+        /* RWD 設定 */
+        @media (max-width: 992px) {
+            .scenes-grid {
+                /* 已改為預設 2 欄 */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .scenes-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            #quiz-section {
+                padding: 20px;
+            }
+            .recommended-machine {
+                flex-direction: column;
+                text-align: center;
+            }
+            .recommendation-details {
+                text-align: center;
+            }
+            .features-list {
+                text-align: left;
+                display: inline-block;
+            }
+            .nav-buttons {
+                flex-direction: column-reverse;
+                gap: 16px;
+            }
+            .btn {
+                width: 100%;
+            }
+            .footer-links {
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .scenes-grid {
+                grid-template-columns: 1fr;
+            }
+            h1 { font-size: 2rem !important; }
+            .quiz-header h2 { font-size: 1.4rem; }
+            .footer-divider { display: none; }
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .comparison-wrapper {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app-container">
+    
+    <!-- 1. 首頁區塊 -->
+    <section id="hero-section" class="fade-in">
+        <h1>第一次買標籤機嗎？</h1>
+        <p class="subtitle">回答 3 個問題，我們幫你挑出最適合的一台。</p>
+        
+        <div class="hero-banner">
+            <img src="https://cdn.groupbuyforms.com/upload/images/vcf/e6/ori/e6ce685e7fc34a7c86f13e1ea52b41f1.png" alt="NIIMBOT 標籤機全系列" onerror="this.onerror=null; this.src='https://placehold.co/800x300/EADCCB/7B5E4A?text=NIIMBOT+Series';">
+        </div>
+
+        <button class="btn" onclick="startQuiz()">開始挑選</button>
+        <p class="note">不需要註冊｜約 15 秒完成｜立即查看推薦結果</p>
+    </section>
+
+    <!-- 2. 測驗區塊 -->
+    <section id="quiz-section" class="hidden">
+        <div class="quiz-header">
+            <p id="progress-text" style="color: var(--text-light); font-weight: 500;">第 1 題，共 3 題</p>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <h2 id="question-title">問題標題</h2>
+        </div>
+
+        <div class="options-grid" id="options-container">
+            <!-- 選項會透過 JS 動態產生 -->
+        </div>
+
+        <div class="nav-buttons">
+            <button class="btn btn-outline" id="btn-prev" onclick="prevQuestion()" style="display: none;">上一題</button>
+            <button class="btn" id="btn-next" onclick="nextQuestion()" disabled>下一題</button>
+        </div>
+    </section>
+
+    <!-- 3. 結果區塊 -->
+    <section id="result-section" class="hidden">
+        <h2 class="result-title">為你挑選的標籤機是：</h2>
+        
+        <div class="recommended-machine">
+            <img id="result-img" src="" alt="推薦標籤機" onerror="this.onerror=null; this.src='https://placehold.co/300x300/EADCCB/7B5E4A?text='+encodeURIComponent(this.alt);">
+            <div class="recommendation-details">
+                <h3 class="machine-name" id="result-name">機型名稱</h3>
+                <div class="reason-text" id="result-reason">推薦理由...</div>
+                <h4>💡 主要特色：</h4>
+                <ul class="features-list" id="result-features">
+                    <!-- 特色清單 -->
+                </ul>
+                <div class="result-actions">
+                    <a href="#" class="btn" id="btn-purchase" target="_blank" onclick="trackEvent('click_purchase')">查看這台標籤機</a>
+                    <button class="btn btn-outline" onclick="restartQuiz()">重新測驗</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. 場景展示 -->
+    <section id="scenes-section" class="hidden">
+        <h2 class="section-title">看看大家怎麼使用標籤機</h2>
+        <div class="scenes-grid">
+            <!-- 場景卡片 (JS 動態生成) -->
+        </div>
+    </section>
+
+    <!-- 5. 比較表 -->
+    <section id="comparison-section" class="hidden">
+        <h2 class="section-title">標籤機快速比較</h2>
+        <div class="comparison-wrapper">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>比較項目</th>
+                        <th>B1 Pro</th>
+                        <th>B21 Pro</th>
+                        <th>N1</th>
+                        <th>B4</th>
+                        <th>K3</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>最適合誰</strong></td>
+                        <td>新手入門、家庭、辦公</td>
+                        <td>重視設計感、工作室</td>
+                        <td>家長、幼兒園</td>
+                        <td>小型電商、烘焙出貨</td>
+                        <td>工廠、倉儲、企業</td>
+                    </tr>
+                    <tr>
+                        <td><strong>常見使用情境</strong></td>
+                        <td>收納分類、食品標示</td>
+                        <td>空間佈置、手帳美甲</td>
+                        <td>兒童用品、姓名貼</td>
+                        <td>商品包裝、物流面單</td>
+                        <td>外箱標籤、產品編號</td>
+                    </tr>
+                    <tr>
+                        <td><strong>標籤耐用性</strong></td>
+                        <td>一般防潑水防油</td>
+                        <td>一般防潑水防油</td>
+                        <td>耐熱、耐酒精、耐磨</td>
+                        <td>一般防潑水防油</td>
+                        <td>一般防潑水防油</td>
+                    </tr>
+                    <tr>
+                        <td><strong>物流面單</strong></td>
+                        <td>不適合</td>
+                        <td>不適合</td>
+                        <td>不適合</td>
+                        <td>非常適合</td>
+                        <td>非常適合</td>
+                    </tr>
+                    <tr>
+                        <td><strong>大量連續列印</strong></td>
+                        <td>普通</td>
+                        <td>普通</td>
+                        <td>普通</td>
+                        <td>適合</td>
+                        <td>非常適合</td>
+                    </tr>
+                    <tr>
+                        <td><strong>最大使用方向</strong></td>
+                        <td>萬用入門</td>
+                        <td>質感設計</td>
+                        <td>育兒專用</td>
+                        <td>包裝出貨兩用</td>
+                        <td>大尺寸連續列印</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
+
+<!-- 頁尾連結區塊 -->
+<footer>
+    <div class="footer-links" id="footer-links-container">
+        <!-- 連結會透過 JS 動態產生，方便未來維護 -->
+    </div>
+</footer>
+
+<!-- Lightbox 預覽 -->
+<div class="lightbox-overlay" id="lightbox-overlay">
+    <div class="lightbox-content">
+        <button class="lightbox-close" id="lightbox-close">&times;</button>
+        <img id="lightbox-img" src="" alt="預覽圖片">
+    </div>
+</div>
+
+<script>
+    // 追蹤事件函式
+    function trackEvent(eventName, data = {}) {
+        console.log(`[Event Tracked] ${eventName}`, data);
+        // 未來可在此串接 GA 或 Meta Pixel
+    }
+
+    // 頁尾連結資料
+    const footerLinks = [
+        { title: '官網', url: 'https://www.niimbot.com.tw/' },
+        { title: 'Instagram', url: 'https://www.instagram.com/niimbot.tw/' },
+        { title: 'Facebook', url: 'https://www.facebook.com/share/18A2btbEue/?mibextid=wwXIfr' },
+        { title: '企業專區', url: 'https://www.niimbot.com.tw/pages/niimbot-Business' }
+    ];
+
+    // 初始化頁尾
+    function initFooter() {
+        const container = document.getElementById('footer-links-container');
+        footerLinks.forEach((link, index) => {
+            const a = document.createElement('a');
+            a.href = link.url;
+            a.innerText = link.title;
+            a.target = "_blank";
+            container.appendChild(a);
+            
+            // 加入分隔線 (除了最後一個項目)
+            if (index < footerLinks.length - 1) {
+                const divider = document.createElement('span');
+                divider.className = 'footer-divider';
+                divider.innerText = '｜';
+                container.appendChild(divider);
+            }
+        });
+    }
+
+    // 產品資料庫
+    const products = {
+        'B1 Pro': {
+            name: 'B1 Pro',
+            image: 'https://cdn.groupbuyforms.com/upload/images/vcf/a6/ori/a68da5ce41394cd6ba42dcb0d0445d49.jpg',
+            tagline: '最多人適合的萬用入門款',
+            features: [
+                '價格較容易入手，機身輕巧',
+                '小字、條碼與細節可以印得清楚',
+                '可搭配多種尺寸與造型的標籤貼紙',
+                '從收納標籤、食品標示到 Logo 貼都能印'
+            ],
+            copy: '你需要的是一台簡單、實用又能應付多種生活需求的標籤機。B1 Pro 從居家收納、辦公室分類到食品包裝都能使用，是第一次購買標籤機最不容易選錯的入門款。',
+            link: 'https://www.niimbot.com.tw/collections/B1Pro%E6%A8%99%E7%B1%A4%E6%A9%9F'
+        },
+        'B21 Pro': {
+            name: 'B21 Pro',
+            image: 'https://cdn.groupbuyforms.com/upload/images/vcf/66/ori/66994c2d28f4482981974246abca8faa.png',
+            tagline: '重視外型與質感的設計款',
+            features: [
+                '核心使用功能與 B1 Pro 相近，外觀升級',
+                '鋼琴烤漆風格，外型更有質感',
+                '適合放在工作桌、化妝台或文具空間',
+                '兼具實用性與空間美感'
+            ],
+            copy: '你不只在意標籤機好不好用，也希望它能融入你的工作空間。B21 Pro 擁有和 B1 Pro 相近的萬用功能，但外型更加精緻、有設計感。',
+            link: 'https://www.niimbot.com.tw/collections/B21Pro%E6%A8%99%E7%B1%A4%E6%A9%9F'
+        },
+        'N1': {
+            name: 'N1',
+            image: 'https://cdn.groupbuyforms.com/upload/images/vcf/c3/ori/c3cc9ace72a94afc8bba268647313476.jpg',
+            tagline: '小朋友用品與耐熱姓名貼專用',
+            features: [
+                '使用碳帶轉印到貼紙上',
+                '耐酒精、耐摩擦，字跡不易掉',
+                '適合需要清潔、消毒與頻繁使用的兒童用品',
+                '奶瓶、水壺、餐具與書包的標示神隊友'
+            ],
+            copy: '你需要的不只是印上名字，而是希望標籤經過清洗、消毒與日常摩擦後仍能維持清楚。N1 適合奶瓶、水壺、餐具與小朋友用品，是育兒姓名貼的優先推薦。',
+            link: 'https://www.niimbot.com.tw/collections/B18%E6%A8%99%E7%B1%A4%E6%A9%9F%E5%B0%8F%E5%B0%BA%E5%AF%B8'
+        },
+        'B4': {
+            name: 'B4',
+            image: 'https://cdn.groupbuyforms.com/upload/images/vcf/c3/ori/c3c61b81d8ce43b1a403c716d2cb1bcc.png',
+            tagline: '小型電商、線上烘焙包裝與出貨推薦',
+            features: [
+                '可印最寬的 10 公分標籤，完美對應全部超商/蝦皮面單',
+                '從品牌Logo、商品標示到出貨標籤一機搞定',
+                '日常標籤用手機操作，物流訂單用連電腦列印',
+                '保留更多列印尺寸，未來訂單成長也不怕'
+            ],
+            copy: '你不只要印商品貼紙，還需要處理包裝與出貨。B4 可以從日常商品標示一路使用到物流面單，現在用得到，未來訂單增加也不容易因尺寸不足而需要重新換機器。（小提醒：若已有線上接單出貨需求，建議直接選擇 B4 保留較大的列印空間喔！）',
+            link: 'https://www.niimbot.com.tw/collections/B4%E6%A8%99%E7%B1%A4%E6%A9%9F'
+        },
+        'K3': {
+            name: 'K3',
+            image: 'https://cdn.groupbuyforms.com/upload/images/vcf/6a/ori/6adfb0a4294f42bf800e3d597c835a50.png',
+            tagline: '工廠、企業、物流與倉儲管理用',
+            features: [
+                '可印製最寬 8 公分的標籤',
+                '適合外箱貼紙與大型商品標示',
+                '專為大量、固定流程與連續列印設計',
+                '工廠、企業、物流與倉儲環境的最佳幫手'
+            ],
+            copy: '你需要處理的不是偶爾幾張商品貼紙，而是工廠、物流或倉儲中的大量列印工作。K3 可印最寬約 8 公分的標籤，適合外箱、貨架、出貨單與大量連續列印。',
+            link: 'https://www.niimbot.com.tw/collections/%E7%B2%BE%E8%87%A3K%E7%B3%BB%E5%88%97%E6%A1%8C%E4%B8%8A%E5%9E%8B%E6%A8%99%E7%B1%A4%E6%A9%9F'
+        }
+    };
+
+    // 場景資料庫
+    const scenesData = [
+        { title: '居家收納', desc: '調味料、冰箱、藥盒、保養品、收納盒與抽屜分類。', rec: '推薦：B1 Pro / B21 Pro', img: 'https://cdn.groupbuyforms.com/upload/images/vcf/56/ori/566d9a9b7a2a42c3adb63bd266ec65c8.png' },
+        { title: '小朋友專用', desc: '奶瓶、水壺、餐具、副食品盒、書包、玩具與姓名貼。', rec: '推薦：N1 (耐熱耐磨)', img: 'https://cdn.groupbuyforms.com/upload/images/vcf/31/ori/31a0a3cd959d40a6960562b91578492d.png' },
+        { title: '小型電商出貨', desc: '物流面單、Logo 貼、感謝貼、商品標籤與包貨。', rec: '推薦：B4', img: 'https://cdn.groupbuyforms.com/upload/images/vcf/b3/ori/b3ea9aeae20a4afdb7c626fb52aac9ca.jpg' },
+        { title: '辦公室收納', desc: '文件夾、資料櫃、線材、行政資料與待處理文件。', rec: '推薦：B1 Pro / B21 Pro', img: 'https://cdn.groupbuyforms.com/upload/images/vcf/af/ori/af6cd022bd504c3fa97140c5f9c136c6.png' },
+        { title: '美容美甲', desc: '凝膠色號、分裝瓶、水鑽、珍珠、工具盒與工作推車。', rec: '推薦：B1 Pro / B21 Pro', img: 'https://cdn.groupbuyforms.com/upload/images/vcf/c4/ori/c48f2101c4ee4e1ab3734b45b422b3cc.png' },
+        { title: '文具手帳', desc: '手帳、筆記本、相片卡、索引貼、書籤與禮物包裝。', rec: '推薦：B1 Pro / B21 Pro', img: 'https://cdn.groupbuyforms.com/upload/images/vcf/51/ori/51ffde4bf2014eb6a15e8326f302e0ba.png' },
+        { title: '烘焙食品', desc: '食材分類、口味貼、保存日期、食品標示與包裝 Logo。', rec: '推薦：B1 Pro (少量) / B4 (接單)', img: 'https://cdn.groupbuyforms.com/upload/images/vcf/17/ori/17f617e8bb734f8aaaacb43885cdc762.png' },
+        { title: '工廠與倉儲', desc: '出貨單、外箱貼紙、產品編號、批次標示與貨架。', rec: '推薦：K3 (最大印8公分)', img: 'https://cdn.groupbuyforms.com/upload/images/vcf/68/ori/68efc2b73cc244f9b72f060e9417c615.png' }
+    ];
+
+    // 測驗題目與選項 (全新3題)
+    const questions = [
+        {
+            title: '第 1 題：你想用標籤機做什麼？',
+            options: [
+                { title: '整理收納、物品分類', desc: '調味料、食品、收納盒、保養品、文件、文具與工具分類。' },
+                { title: '製作小朋友姓名貼', desc: '奶瓶、水壺、餐具、書包、玩具與需要清洗消毒的用品。' },
+                { title: '製作商品貼紙與包裝貼', desc: '品牌 Logo、口味貼、保存日期、感謝貼、QR Code 與商品標示。' },
+                { title: '列印電商物流面單', desc: '蝦皮、交貨便、超商物流單、出貨標籤與商品包裝。' },
+                { title: '大量列印大型標籤', desc: '外箱、貨架、產品編號、批次管理與倉儲標示。' }
+            ]
+        },
+        {
+            title: '第 2 題：你主要會在哪裡使用？',
+            options: [
+                { title: '家裡或辦公室', desc: '日常收納、食品標示、文件與用品分類。' },
+                { title: '幼兒園、學校或育兒生活', desc: '使用在需要清洗、消毒與頻繁接觸的兒童用品。' },
+                { title: '美容美甲、文具或手作工作室', desc: '用於材料分類、小型商品貼、工具標示與工作空間整理。' },
+                { title: '電商、烘焙或小型店家', desc: '商品包裝、接單貼標、品牌貼紙與出貨作業。' },
+                { title: '工廠、物流或倉儲', desc: '固定作業流程、大型標籤、外箱與大量連續列印。' }
+            ]
+        },
+        {
+            title: '第 3 題：挑選標籤機時，你最在意什麼？',
+            options: [
+                { title: '價格好入手，功能實用', desc: '希望第一次購買也不容易選錯。' },
+                { title: '外型漂亮、有設計感', desc: '希望機器可以融入居家或工作空間。' },
+                { title: '標籤耐熱、耐酒精，可以清洗', desc: '主要使用在小朋友用品與需要頻繁清潔的物品。' },
+                { title: '商品包裝和物流面單都能印', desc: '希望一台機器兼顧日常商品貼紙與電商出貨。' },
+                { title: '可以印大尺寸並大量連續列印', desc: '主要用於企業、工廠、物流與倉儲管理。' }
+            ]
+        }
+    ];
+
+    let currentStep = 0;
+    // userAnswers 長度會根據 questions.length 自動設定為 3
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function startQuiz() {
+        trackEvent('start_quiz');
+        document.getElementById('hero-section').classList.add('hidden');
+        document.getElementById('quiz-section').classList.remove('hidden');
+        document.getElementById('quiz-section').classList.add('fade-in');
+        renderQuestion();
+        renderScenes(); // 預先渲染場景卡片
+    }
+
+    function renderQuestion() {
+        const q = questions[currentStep];
+        document.getElementById('question-title').innerText = q.title;
+        document.getElementById('progress-text').innerText = `第 ${currentStep + 1} 題，共 ${questions.length} 題`;
+        document.getElementById('progress-bar').style.width = `${((currentStep + 1) / questions.length) * 100}%`;
+
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        
+        q.options.forEach((opt, index) => {
+            const card = document.createElement('div');
+            card.className = 'option-card';
+            if (userAnswers[currentStep] === index) {
+                card.classList.add('selected');
+                document.getElementById('btn-next').disabled = false;
+            }
+            card.onclick = () => selectOption(index);
+            
+            card.innerHTML = `
+                <div class="option-title">${opt.title}</div>
+                ${opt.desc ? `<div class="option-desc">${opt.desc}</div>` : ''}
+            `;
+            container.appendChild(card);
+        });
+
+        document.getElementById('btn-prev').style.display = currentStep > 0 ? 'inline-block' : 'none';
+        
+        // 如果還沒選，禁用下一題按鈕
+        if (userAnswers[currentStep] === null) {
+            document.getElementById('btn-next').disabled = true;
+        }
+    }
+
+    function selectOption(index) {
+        userAnswers[currentStep] = index;
+        renderQuestion();
+        // 自動前往下一題，稍微延遲讓使用者看到選取狀態
+        setTimeout(() => {
+            nextQuestion();
+        }, 300);
+    }
+
+    function nextQuestion() {
+        if (userAnswers[currentStep] === null) return;
+        
+        trackEvent('answer_question', { step: currentStep + 1, answer: userAnswers[currentStep] });
+        
+        if (currentStep < questions.length - 1) {
+            currentStep++;
+            renderQuestion();
+        } else {
+            generateResult();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentStep > 0) {
+            currentStep--;
+            renderQuestion();
+        }
+    }
+
+    function generateResult() {
+        trackEvent('complete_quiz', { answers: userAnswers });
+        
+        // 取出三題的答案索引
+        const [q1, q2, q3] = userAnswers;
+        
+        const scores = {
+            'B1 Pro': 0,
+            'B21 Pro': 0,
+            'N1': 0,
+            'B4': 0,
+            'K3': 0
+        };
+
+        // 第 1 題加權規則
+        if (q1 === 0) {
+            scores['B1 Pro'] += 6;
+            scores['B21 Pro'] += 6;
+        } else if (q1 === 1) {
+            scores['N1'] += 9;
+        } else if (q1 === 2) {
+            scores['B1 Pro'] += 4;
+            scores['B21 Pro'] += 4;
+            scores['B4'] += 5;
+        } else if (q1 === 3) {
+            scores['B4'] += 10;
+        } else if (q1 === 4) {
+            scores['K3'] += 10;
+        }
+
+        // 第 2 題加權規則
+        if (q2 === 0) {
+            scores['B1 Pro'] += 5;
+            scores['B21 Pro'] += 5;
+        } else if (q2 === 1) {
+            scores['N1'] += 7;
+        } else if (q2 === 2) {
+            scores['B1 Pro'] += 5;
+            scores['B21 Pro'] += 5;
+        } else if (q2 === 3) {
+            scores['B4'] += 6;
+            scores['B1 Pro'] += 1;
+            scores['B21 Pro'] += 1;
+        } else if (q2 === 4) {
+            scores['K3'] += 8;
+        }
+
+        // 第 3 題加權規則
+        if (q3 === 0) {
+            scores['B1 Pro'] += 3;
+        } else if (q3 === 1) {
+            scores['B21 Pro'] += 3;
+        } else if (q3 === 2) {
+            scores['N1'] += 3;
+        } else if (q3 === 3) {
+            scores['B4'] += 3;
+        } else if (q3 === 4) {
+            scores['K3'] += 3;
+        }
+
+        // 尋找最高分
+        const highestScore = Math.max(...Object.values(scores));
+        const topModels = Object.keys(scores).filter(model => scores[model] === highestScore);
+
+        let recommendedModel = 'B1 Pro'; // 預設
+
+        if (topModels.length === 1) {
+            recommendedModel = topModels[0];
+        } else {
+            // 處理同分狀況
+            if (topModels.includes('B1 Pro') && topModels.includes('B21 Pro') && topModels.length === 2) {
+                // B1 Pro 與 B21 Pro 同分時：第 3 題選擇外型漂亮，推薦 B21 Pro，否則 B1 Pro。
+                if (q3 === 1) {
+                    recommendedModel = 'B21 Pro';
+                } else {
+                    recommendedModel = 'B1 Pro';
+                }
+            } else {
+                // 其他機型同分時：優先依照第 1 題判斷
+                if (q1 === 1 && topModels.includes('N1')) {
+                    recommendedModel = 'N1';
+                } else if (q1 === 3 && topModels.includes('B4')) {
+                    recommendedModel = 'B4';
+                } else if (q1 === 4 && topModels.includes('K3')) {
+                    recommendedModel = 'K3';
+                } else if (q1 === 0) {
+                    if (q3 === 1 && topModels.includes('B21 Pro')) {
+                        recommendedModel = 'B21 Pro';
+                    } else if (topModels.includes('B1 Pro')) {
+                        recommendedModel = 'B1 Pro';
+                    } else {
+                        recommendedModel = topModels[0];
+                    }
+                } else if (q1 === 2) {
+                    if (q2 === 0 || q2 === 2) {
+                        if (q3 === 1 && topModels.includes('B21 Pro')) {
+                            recommendedModel = 'B21 Pro';
+                        } else if (topModels.includes('B1 Pro')) {
+                            recommendedModel = 'B1 Pro';
+                        } else {
+                            recommendedModel = topModels[0];
+                        }
+                    } else if (q2 === 3 && topModels.includes('B4')) {
+                        recommendedModel = 'B4';
+                    } else {
+                        recommendedModel = topModels[0];
+                    }
+                } else {
+                    // 若仍然無法判斷，預設推薦 B1 Pro
+                    recommendedModel = topModels.includes('B1 Pro') ? 'B1 Pro' : topModels[0];
+                }
+            }
+        }
+
+        showResult(recommendedModel);
+    }
+
+    function showResult(modelKey) {
+        document.getElementById('quiz-section').classList.add('hidden');
+        
+        const res = products[modelKey];
+        trackEvent('view_product', { product: res.name });
+
+        document.getElementById('result-img').src = res.image;
+        document.getElementById('result-img').alt = res.name;
+        document.getElementById('result-name').innerText = res.name;
+        
+        // 動態生成推薦理由 (引用三題內容)
+        const q1Text = questions[0].options[userAnswers[0]].title;
+        const q2Text = questions[1].options[userAnswers[1]].title;
+        const q3Text = questions[2].options[userAnswers[2]].title;
+        let dynamicReason = `根據您的回答，您想用標籤機來「${q1Text}」，主要會使用在「${q2Text}」，挑選時最在意「${q3Text}」。<br><br>${res.copy}`;
+        
+        document.getElementById('result-reason').innerHTML = dynamicReason;
+        
+        const featuresHtml = res.features.map(f => `<li>${f}</li>`).join('');
+        document.getElementById('result-features').innerHTML = featuresHtml;
+        document.getElementById('btn-purchase').href = res.link;
+
+        const resultSec = document.getElementById('result-section');
+        resultSec.classList.remove('hidden');
+        resultSec.classList.add('fade-in');
+
+        document.getElementById('scenes-section').classList.remove('hidden');
+        document.getElementById('scenes-section').classList.add('fade-in');
+        
+        document.getElementById('comparison-section').classList.remove('hidden');
+        document.getElementById('comparison-section').classList.add('fade-in');
+        
+        // 滾動到結果
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderScenes() {
+        const container = document.querySelector('.scenes-grid');
+        container.innerHTML = '';
+        scenesData.forEach(scene => {
+            container.innerHTML += `
+                <div class="scene-card">
+                    <div class="scene-img-wrapper">
+                        <img src="${scene.img}" alt="${scene.title}" onclick="openLightbox(this.src)" onerror="this.onerror=null; this.src='https://placehold.co/400x300/EADCCB/7B5E4A?text=${encodeURIComponent(scene.title)}';">
+                    </div>
+                    <div class="scene-info">
+                        <h3>${scene.title}</h3>
+                        <p>${scene.desc}</p>
+                        <span class="scene-rec">${scene.rec}</span>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // Lightbox 功能
+    const lightbox = document.getElementById('lightbox-overlay');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxClose = document.getElementById('lightbox-close');
+
+    function openLightbox(src) {
+        lightboxImg.src = src;
+        lightbox.classList.add('active');
+    }
+
+    function closeLightbox() {
+        lightbox.classList.remove('active');
+    }
+
+    // 點擊背景關閉
+    lightbox.addEventListener('click', function(e) {
+        if (e.target === lightbox) {
+            closeLightbox();
+        }
+    });
+
+    // 點擊關閉按鈕關閉
+    lightboxClose.addEventListener('click', closeLightbox);
+
+    // 按 Esc 鍵關閉
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+            closeLightbox();
+        }
+    });
+
+    function restartQuiz() {
+        trackEvent('restart_quiz');
+        currentStep = 0;
+        userAnswers = new Array(questions.length).fill(null);
+        
+        document.getElementById('result-section').classList.add('hidden');
+        document.getElementById('scenes-section').classList.add('hidden');
+        document.getElementById('comparison-section').classList.add('hidden');
+        
+        document.getElementById('hero-section').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // 初始化執行
+    initFooter();
+
+</script>
+</body>
+</html>
